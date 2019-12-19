@@ -1,3 +1,9 @@
+/* .-----------------------------------------.
+ * |  Copyright (c) 2019, Leonardo Werneck   |
+ * | Licensed under the BSD 2-Clause License |
+ * .-----------------------------------------.
+ */
+
 /* Program     : TOV Solver
  * File        : Polytropic_EOS__struct_initialization.C
  * Author      : Leo Werneck (werneck@if.usp.br)
