@@ -1,3 +1,9 @@
+/* .-----------------------------------------.
+ * |  Copyright (c) 2019, Leonardo Werneck   |
+ * | Licensed under the BSD 2-Clause License |
+ * .-----------------------------------------.
+ */
+
 #ifndef __OUTPUT_ROUTINES__
 #define __OUTPUT_ROUTINES__
 /* Program     : TOV Solver
