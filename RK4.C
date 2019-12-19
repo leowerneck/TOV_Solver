@@ -1,3 +1,9 @@
+/* .-----------------------------------------.
+ * |  Copyright (c) 2019, Leonardo Werneck   |
+ * | Licensed under the BSD 2-Clause License |
+ * .-----------------------------------------.
+ */
+
 /* Program     : TOV Solver
  * File        : RK4.C
  * Author      : Leo Werneck (werneck@if.usp.br)
