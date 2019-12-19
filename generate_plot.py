@@ -1,3 +1,8 @@
+# .-----------------------------------------.
+# |  Copyright (c) 2019, Leonardo Werneck   |
+# | Licensed under the BSD 2-Clause License |
+# .-----------------------------------------.
+
 from numpy import loadtxt, linspace
 import matplotlib.pyplot as plt
 
