@@ -1,3 +1,9 @@
+/* .-----------------------------------------.
+ * |  Copyright (c) 2019, Leonardo Werneck   |
+ * | Licensed under the BSD 2-Clause License |
+ * .-----------------------------------------.
+ */
+
 /* Program     : TOV Solver
  * File        : TOV_headers.h
  * Author      : Leo Werneck (werneck@if.usp.br)
