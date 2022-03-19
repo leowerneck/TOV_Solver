@@ -17,7 +17,7 @@ EOSlines = ["-","-","-","-","-","-","-.","-.","-.","-.","-."]
 
 fig = plt.figure(dpi=300)
 ax = fig.add_subplot(111)
-ax.set_color_cycle(EOScolors)
+ax.set_prop_cycle(color=EOScolors)
 ax.set_xlim(9,17)
 ax.set_ylim(0,3)
 ax.set_xlabel(r"$R$ (km)")
