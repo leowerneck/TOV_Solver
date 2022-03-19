@@ -12,25 +12,14 @@
  * Description : This file is dedicated to the initialization
  *               of the eos_struct array.
  *
- * Dependencies: string.h, math.h, & TOV_headers.h
+ * Dependencies: string.h, math.h, & tov_headers.h
  *
  * Reference(s): Read et al., PRD 79, 124032 (2009) | (https://arxiv.org/pdf/0812.2163.pdf)
- *  
+ *
  */
 
 /* Include dependencies */
-#include <string>
-#include <math.h>
-#include "TOV_headers.h"
-
-/* .---------------------.
- * | Function prototypes |
- * .---------------------.
- */
-inline void convert_EOS_struct_to_geometrized_units( eos_struct &eos );
-inline void populate_Kpoly_PPEOS( eos_struct &eos );
-inline void populate_epsIC_PPEOS( eos_struct &eos );
-inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos );
+#include "tov_headers.h"
 
 /* Function   : initialize_EOS_struct()
  * Author     : Leo Werneck (werneck@if.usp.br)
@@ -45,7 +34,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos );
   *
  * Outputs(s) : eos     - Struct containing EOS information, fully initialized
  */
-inline void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
+void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
 
   /* First initialize the EOS parameters from table III in Read et al.
    * This sets:
@@ -150,7 +139,7 @@ inline void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
   for(int j=0; j <= 2; j++) {
     eos.Press_PPEOS[j] = eos.Kpoly_PPEOS[j] * pow(eos.rho_b_PPEOS[j],eos.Gamma_PPEOS[j]);
   }
-  
+
   /* Computing rho_{3} is then done in a slightly unintuitive way.
    * Remember that we currently know the values of P_{4}, rho_{4},
    * and Gamma_{4}. Therefore, we compute
@@ -170,17 +159,17 @@ inline void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
    * .-----------------------------------------------------.
    */
   eos.rho_b_PPEOS[3] = pow( eos.Kpoly_PPEOS[4]/eos.Kpoly_PPEOS[3], 1.0/(eos.Gamma_PPEOS[3] - eos.Gamma_PPEOS[4]) );
-  
+
   /* Then, we finish populating K_{j} */
   for(int j=5; j < eos.neos; j++) {
     eos.Kpoly_PPEOS[j] = eos.Kpoly_PPEOS[j-1]*pow(eos.rho_b_PPEOS[j-1],eos.Gamma_PPEOS[j-1]-eos.Gamma_PPEOS[j]);
   }
-  
+
   /* And finally we finish populating P_{j} */
   for(int j=3; j < eos.neos-1; j++) {
     eos.Press_PPEOS[j] = eos.Kpoly_PPEOS[j] * pow(eos.rho_b_PPEOS[j],eos.Gamma_PPEOS[j]);
   }
-  
+
   /* At this point we have populated:
    *
    *  - eos.neos
@@ -199,7 +188,7 @@ inline void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
    * convert_EOS_struct_to_geometrized_units().
    */
   convert_EOS_struct_to_geometrized_units(eos);
-  
+
 }
 
 /* Function   : convert_EOS_struct_to_geometrized_units()
@@ -213,7 +202,7 @@ inline void initialize_EOS_struct( string EOSname, eos_struct &eos ) {
  *
  * Outputs(s) : eos - Fully populated struct in G = 1 = c units
  */
-inline void convert_EOS_struct_to_geometrized_units( eos_struct &eos ) {
+void convert_EOS_struct_to_geometrized_units( eos_struct &eos ) {
 
   /* The values of the polytropic EOS parameters we have used are in units
    * such that [P] = [rho] = g/cm^{3}. In order to keep quantities of order
@@ -243,7 +232,7 @@ inline void convert_EOS_struct_to_geometrized_units( eos_struct &eos ) {
    * implying the relation
    * .-----------------------------------------------------.
    * | P_rescaled_{j} = P_{j} * (rho_rescaled_{j}/rho_{j}) |
-   * .-----------------------------------------------------. 
+   * .-----------------------------------------------------.
    */
   REAL Press_rescaled[eos.neos-1];
   for(int j=0; j<eos.neos-1; j++) {
@@ -276,8 +265,8 @@ inline void convert_EOS_struct_to_geometrized_units( eos_struct &eos ) {
  *
  * Outputs(s) : eos.Kpoly_PPEOS - Fully populated array
  */
-inline void populate_Kpoly_PPEOS( eos_struct &eos ) {
-  
+void populate_Kpoly_PPEOS( eos_struct &eos ) {
+
   /* Remember that for a piecewise polytropic EOS, we have
    * .---------------------------------------------------------------------------------.
    * |             / K_{0}   rho_b ^ (Gamma_{0})  , if              rho_b <= rho_{0}   |
@@ -313,7 +302,7 @@ inline void populate_Kpoly_PPEOS( eos_struct &eos ) {
  *
  * Outputs(s) : eos.Press_PPEOS - Fully populated array
  */
-inline void populate_Press_PPEOS( eos_struct &eos ) {
+void populate_Press_PPEOS( eos_struct &eos ) {
   /* In this function we simply compute the pressure values
    * associated with rho_{j}, i.e.
    * .---------------------------------------.
@@ -335,8 +324,8 @@ inline void populate_Press_PPEOS( eos_struct &eos ) {
  *
  * Outputs(s) : eos.Kpoly_PPEOS - Fully populated array
  */
-inline void populate_epsIC_PPEOS( eos_struct &eos ) {
-  
+void populate_epsIC_PPEOS( eos_struct &eos ) {
+
   /* Remember that for a piecewise polytropic EOS, we have
    * .-------------------------------------------------------------------------------------------------.
    * |        / C_{0}   + K_{0}  rho_b^( Gamma_{0}-1 )/( Gamma_{0}-1 ), if            rho_b<=rho_{0}   |
@@ -357,7 +346,7 @@ inline void populate_epsIC_PPEOS( eos_struct &eos ) {
    * eps(rho_{0}) = C_{0} + K_{0} rho_{0} ^ (Gamma_{0}-1)/(Gamma_{0}-1)
    *              = C_{1} + K_{1} rho_{0} ^ (Gamma_{1}-1)/(Gamma_{1}-1)
    *
-   * => C_{1} = C_{0} 
+   * => C_{1} = C_{0}
    *          + K_{0} rho_{0} ^ (Gamma_{0}-1)/(Gamma_{0}-1)
    *          - K_{1} rho_{0} ^ (Gamma_{1}-1)/(Gamma_{1}-1)
    *
@@ -406,7 +395,7 @@ inline void populate_epsIC_PPEOS( eos_struct &eos ) {
  *              eos.Gamma_PPEOS[6] - Value from table III of Read et al. (Piecewise Polytropic EOS only)
 
  */
-inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
+int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
 
   if( EOSname == "Single" )
   {
@@ -426,7 +415,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.384; eos.Gamma_PPEOS[4] = 3.005; eos.Gamma_PPEOS[5] = 2.988; eos.Gamma_PPEOS[6] = 2.851;
   }
-    
+
   else if( EOSname == "APR1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -434,7 +423,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 33.943; eos.Gamma_PPEOS[4] = 2.442; eos.Gamma_PPEOS[5] = 3.256; eos.Gamma_PPEOS[6] = 2.908;
   }
-    
+
   else if( EOSname == "APR2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -442,7 +431,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.126; eos.Gamma_PPEOS[4] = 2.643; eos.Gamma_PPEOS[5] = 3.014; eos.Gamma_PPEOS[6] = 2.945;
   }
-    
+
   else if( EOSname == "APR3" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -450,7 +439,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.392; eos.Gamma_PPEOS[4] = 3.166; eos.Gamma_PPEOS[5] = 3.573; eos.Gamma_PPEOS[6] = 3.281;
   }
-    
+
   else if( EOSname == "APR4" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -458,7 +447,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.269; eos.Gamma_PPEOS[4] = 2.830; eos.Gamma_PPEOS[5] = 3.445; eos.Gamma_PPEOS[6] = 3.348;
   }
-    
+
   else if( EOSname == "FPS" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -466,7 +455,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.283; eos.Gamma_PPEOS[4] = 2.985; eos.Gamma_PPEOS[5] = 2.863; eos.Gamma_PPEOS[6] = 2.600;
   }
-    
+
   else if( EOSname == "WFF1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -474,7 +463,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.031; eos.Gamma_PPEOS[4] = 2.519; eos.Gamma_PPEOS[5] = 3.791; eos.Gamma_PPEOS[6] = 3.660;
   }
-    
+
   else if( EOSname == "WFF2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -482,7 +471,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.233; eos.Gamma_PPEOS[4] = 2.888; eos.Gamma_PPEOS[5] = 3.475; eos.Gamma_PPEOS[6] = 3.517;
   }
-    
+
   else if( EOSname == "WFF3" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -490,7 +479,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.283; eos.Gamma_PPEOS[4] = 3.329; eos.Gamma_PPEOS[5] = 2.952; eos.Gamma_PPEOS[6] = 2.589;
   }
-    
+
   else if( EOSname == "BBB2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -498,7 +487,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.331; eos.Gamma_PPEOS[4] = 3.418; eos.Gamma_PPEOS[5] = 2.835; eos.Gamma_PPEOS[6] = 2.832;
   }
-    
+
   else if( EOSname == "BPAL12" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -506,7 +495,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.358; eos.Gamma_PPEOS[4] = 2.209; eos.Gamma_PPEOS[5] = 2.201; eos.Gamma_PPEOS[6] = 2.176;
   }
-    
+
   else if( EOSname == "ENG" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -514,7 +503,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.437; eos.Gamma_PPEOS[4] = 3.514; eos.Gamma_PPEOS[5] = 3.130; eos.Gamma_PPEOS[6] = 3.168;
   }
-    
+
   else if( EOSname == "MPA1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -522,7 +511,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.495; eos.Gamma_PPEOS[4] = 3.446; eos.Gamma_PPEOS[5] = 3.572; eos.Gamma_PPEOS[6] = 2.887;
   }
-    
+
   else if( EOSname == "MS1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -530,7 +519,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.858; eos.Gamma_PPEOS[4] = 3.224; eos.Gamma_PPEOS[5] = 3.033; eos.Gamma_PPEOS[6] = 1.325;
   }
-    
+
   else if( EOSname == "MS2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -538,7 +527,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.605; eos.Gamma_PPEOS[4] = 2.447; eos.Gamma_PPEOS[5] = 2.184; eos.Gamma_PPEOS[6] = 1.855;
   }
-    
+
   else if( EOSname == "MS1b" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -546,7 +535,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.855; eos.Gamma_PPEOS[4] = 3.456; eos.Gamma_PPEOS[5] = 3.011; eos.Gamma_PPEOS[6] = 1.425;
   }
-    
+
   else if( EOSname == "PS" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -554,7 +543,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.671; eos.Gamma_PPEOS[4] = 2.216; eos.Gamma_PPEOS[5] = 1.640; eos.Gamma_PPEOS[6] = 2.365;
   }
-    
+
   else if( EOSname == "GS1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -562,7 +551,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.504; eos.Gamma_PPEOS[4] = 2.350; eos.Gamma_PPEOS[5] = 1.267; eos.Gamma_PPEOS[6] = 2.421;
   }
-    
+
   else if( EOSname == "GS2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -578,7 +567,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.623; eos.Gamma_PPEOS[4] = 3.258; eos.Gamma_PPEOS[5] = 1.472; eos.Gamma_PPEOS[6] = 2.464;
   }
-    
+
   else if( EOSname == "GNH3" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -586,7 +575,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.648; eos.Gamma_PPEOS[4] = 2.664; eos.Gamma_PPEOS[5] = 2.194; eos.Gamma_PPEOS[6] = 2.304;
   }
-    
+
   else if( EOSname == "H1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -594,7 +583,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.564; eos.Gamma_PPEOS[4] = 2.595; eos.Gamma_PPEOS[5] = 1.845; eos.Gamma_PPEOS[6] = 1.897;
   }
-    
+
   else if( EOSname == "H2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -602,7 +591,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.617; eos.Gamma_PPEOS[4] = 2.775; eos.Gamma_PPEOS[5] = 1.855; eos.Gamma_PPEOS[6] = 1.858;
   }
-    
+
   else if( EOSname == "H3" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -610,7 +599,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.646; eos.Gamma_PPEOS[4] = 2.787; eos.Gamma_PPEOS[5] = 1.951; eos.Gamma_PPEOS[6] = 1.901;
   }
-    
+
   else if( EOSname == "H4" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -618,7 +607,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.669; eos.Gamma_PPEOS[4] = 2.909; eos.Gamma_PPEOS[5] = 2.246; eos.Gamma_PPEOS[6] = 2.144;
   }
-    
+
   else if( EOSname == "H5" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -626,7 +615,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.609; eos.Gamma_PPEOS[4] = 2.793; eos.Gamma_PPEOS[5] = 1.974; eos.Gamma_PPEOS[6] = 1.915;
   }
-    
+
   else if( EOSname == "H6" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -634,7 +623,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.593; eos.Gamma_PPEOS[4] = 2.637; eos.Gamma_PPEOS[5] = 2.121; eos.Gamma_PPEOS[6] = 2.064;
   }
-    
+
   else if( EOSname == "H7" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -642,7 +631,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.559; eos.Gamma_PPEOS[4] = 2.621; eos.Gamma_PPEOS[5] = 2.048; eos.Gamma_PPEOS[6] = 2.006;
   }
-    
+
   else if( EOSname == "PCL2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -650,7 +639,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.507; eos.Gamma_PPEOS[4] = 2.554; eos.Gamma_PPEOS[5] = 1.880; eos.Gamma_PPEOS[6] = 1.977;
   }
-  
+
   else if( EOSname == "ALF1" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -658,7 +647,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.055; eos.Gamma_PPEOS[4] = 2.013; eos.Gamma_PPEOS[5] = 3.389; eos.Gamma_PPEOS[6] = 2.033;
   }
-  
+
   else if( EOSname == "ALF2" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -666,7 +655,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.616; eos.Gamma_PPEOS[4] = 4.070; eos.Gamma_PPEOS[5] = 2.411; eos.Gamma_PPEOS[6] = 1.890;
   }
-  
+
   else if( EOSname == "ALF3" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -674,7 +663,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
      */
     eos.Press_PPEOS[4] = 34.283; eos.Gamma_PPEOS[4] = 2.883; eos.Gamma_PPEOS[5] = 2.653; eos.Gamma_PPEOS[6] = 1.952;
   }
-  
+
   else if( EOSname == "ALF4" )
   {
     /* Copy & paste from Table III of Read et al.
@@ -691,7 +680,7 @@ inline int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
   REAL log10_pressure_in_cgs  = eos.Press_PPEOS[4];
 
   /* Convert this to units where [P] = [rho] by dividing P by c^(2) */
-  /* Note: The speed of light is a global variable, defined in TOV_headers.h */
+  /* Note: The speed of light is a global variable, defined in tov_headers.h */
   REAL log10_pressure_over_c2 = log10_pressure_in_cgs - 2.0*log10(SPEEDOFLIGHT);
 
   /* Update the eos value of P_(4) */

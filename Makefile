@@ -1,22 +1,22 @@
 CXX      = g++
 CXXFLAGS = -Wall -march=native -O2
 
-SRC = Polytropic_EOS__struct_initialization.C \
-      Polytropic_EOS__lowlevel_functions.C \
-      RK4.C \
-      TOV_RHSs.C \
-      TOV_Solver.C \
-      Output_routines.C
+SRC = polytropic_eos__struct_initialization.cc \
+      polytropic_eos__lowlevel_functions.cc \
+      rk4.cc \
+      tov_rhss.cc \
+      tov_solver.cc \
+      output_routines.cc
 
-OBJ = $(SRC:.C=.o)
-EXE = TOV_solver
+OBJ = $(SRC:.cc=.o)
+EXE = tov_solver
 
 all: $(EXE)
 
 $(EXE): $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o $(EXE)
 
-$(OBJ): %.o: %.C
+$(OBJ): %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

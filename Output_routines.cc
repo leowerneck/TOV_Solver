@@ -4,8 +4,6 @@
  * .-----------------------------------------.
  */
 
-#ifndef __OUTPUT_ROUTINES__
-#define __OUTPUT_ROUTINES__
 /* Program     : TOV Solver
  * File        : Output_routines.C
  * Author      : Leo Werneck (werneck@if.usp.br)
@@ -14,32 +12,14 @@
  * Description : This file implements functions to be used
  *               when outputting our results to file
  *
- * Dependencies: stdio.h, stdlib.h, string.h, TOV_headers.h, & Polytropic_EOS__lowlevel_functions.C
+ * Dependencies: stdio.h, stdlib.h, string.h, tov_headers.h, & Polytropic_EOS__lowlevel_functions.C
  *
  * Reference(s): None
  *
  */
 
-/* .--------------.
- * | Dependencies |
- * .--------------.
- */
-
-/* Standard C libraries */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 /* TOV_Solver files */
-#include "TOV_headers.h"
-#include "Polytropic_EOS__lowlevel_functions.C"
-
-/* .---------------------.
- * | Function prototypes |
- * .---------------------.
- */
-inline REAL convert_mass_to_solar_masses( REAL Mass_G_units );
-inline REAL convert_radius_to_kilometers( REAL Radius_G_units );
+#include "tov_headers.h"
 
 
 /* Function   : output_program_logo()
@@ -53,7 +33,7 @@ inline REAL convert_radius_to_kilometers( REAL Radius_G_units );
  * Outputs(s) : Prints the program logo to screen
  *
  */
-inline void print_TOV_logo() {
+void print_TOV_logo(void) {
 
   printf(".------------.  .----------. .-.            .-.   \n");
   printf("|            |  |          |  \\ \\          / /  \n");
@@ -91,8 +71,12 @@ inline void print_TOV_logo() {
  *                       Column 7 - Mass        (Solar masses)
  *                       Column 8 - Radius      (Kilometers)
  */
-inline void output_current_data_to_file(string outfile_name,eos_struct eos,
-              				int iteration, REAL Radius_G_units, REAL step_size_G_units, REAL *gfs_at_rr) {
+void output_current_data_to_file(string outfile_name,
+                                 eos_struct eos,
+                                 int iteration,
+                                 REAL Radius_G_units,
+                                 REAL step_size_G_units,
+                                 REAL *restrict gfs_at_rr) {
 
   /* Pressure in geometrized units */
   REAL Pressure = gfs_at_rr[PRESSURE];
@@ -141,7 +125,7 @@ inline void output_current_data_to_file(string outfile_name,eos_struct eos,
  * Outputs(s) : Prints EOS table to terminal
  *
  */
-inline void print_EOS_table( const eos_struct eos ) {
+void print_EOS_table( const eos_struct eos ) {
 
   printf(".--------------------.-----------------.\n");
   printf("|   EOS Parameter    | Parameter Value |\n");
@@ -176,7 +160,7 @@ inline void print_EOS_table( const eos_struct eos ) {
  * Outputs(s) : Mass_solar_masses - Mass in solar masses
  *
  */
-inline REAL convert_mass_to_solar_masses( REAL Mass_G_units ) {
+REAL convert_mass_to_solar_masses( REAL Mass_G_units ) {
 
   /* .--------------------.
    * | Physical constants |
@@ -232,7 +216,7 @@ inline REAL convert_mass_to_solar_masses( REAL Mass_G_units ) {
  *
  * Outputs(s) : Radius_km      - Radius in kilometers
  */
-inline REAL convert_radius_to_kilometers( REAL Radius_G_units ) {
+REAL convert_radius_to_kilometers( REAL Radius_G_units ) {
 
   /* .--------------------.
    * | Physical constants |
@@ -278,7 +262,7 @@ inline REAL convert_radius_to_kilometers( REAL Radius_G_units ) {
 
 }
 
-inline void output_rhob_mass_radius_to_file( string EOSname, const int iteration, const REAL rho_b_central, const REAL Mass_in_solar_masses, const REAL Radius_in_kilometers ) {
+void output_rhob_mass_radius_to_file( string EOSname, const int iteration, const REAL rho_b_central, const REAL Mass_in_solar_masses, const REAL Radius_in_kilometers ) {
 
   string filename = EOSname+"_mass_vs_radius.dat";
   FILE *outfilemassvsradius;
@@ -295,5 +279,3 @@ inline void output_rhob_mass_radius_to_file( string EOSname, const int iteration
   fclose(outfilemassvsradius);
 
 }
-
-#endif

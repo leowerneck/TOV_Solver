@@ -12,33 +12,15 @@
  * Description : This file implements the RHSs of the Tolman–Oppenheimer–Volkoff
  *               equations
  *
- * Dependencies: stdio.h, stdlib.h, math.h, TOV_headers.h, RK4.C, TOV_RHSs.C, Polytropic_EOS__struct_initialization.C, & Polytropic_EOS__lowlevel_functions.C
+ * Dependencies: stdio.h, stdlib.h, math.h, tov_headers.h, RK4.C, TOV_RHSs.C, Polytropic_EOS__struct_initialization.C, & Polytropic_EOS__lowlevel_functions.C
  *
  * Reference(s): Read et al., PRD 79, 124032 (2009) | (https://arxiv.org/pdf/0812.2163.pdf)
  *               https://en.wikipedia.org/wiki/Tolman%E2%80%93Oppenheimer%E2%80%93Volkoff_equation
  *
  */
 
-/* .--------------.
- * | Dependencies |
- * .--------------.
- */
-
-/* Standard C libraries */
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string>
-
-using namespace std;
-
 /* TOV_Solver files */
-#include "TOV_headers.h"
-#include "RK4.C"
-#include "TOV_RHSs.C"
-#include "Polytropic_EOS__struct_initialization.C"
-#include "Polytropic_EOS__lowlevel_functions.C"
-#include "Output_routines.C"
+#include "tov_headers.h"
 
 /* Function   : main()
  * Author     : Leo Werneck (werneck@if.usp.br)

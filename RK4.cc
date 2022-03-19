@@ -12,17 +12,13 @@
  * Description : This file implements a fourth-order Runge-Kutta
  *               integrator that is used to solve the TOV equations.
  *
- * Dependencies: TOV_headers.h & TOV_RHSs.C
+ * Dependencies: tov_headers.h & TOV_RHSs.C
  *
  * Reference(s): https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods
  */
 
-#ifndef __RK4__
-#define __RK4__
-
 /* Include dependencies */
-#include "TOV_headers.h"
-#include "TOV_RHSs.C"
+#include "tov_headers.h"
 
 /* Function   : RK4_method()
  * Author     : Leo Werneck (werneck@if.usp.br)
@@ -37,8 +33,8 @@
  *
  * Outputs(s) : gfs_at_rr_plus_dr - Fully populated array
  */
-inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REAL *gfs_at_rr, REAL *gfs_at_rr_plus_dr ) {
-  
+void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REAL *restrict gfs_at_rr, REAL *restrict gfs_at_rr_plus_dr ) {
+
   /******************
    * The RK4 Method *
    ******************
@@ -77,7 +73,7 @@ inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REA
   TOV_RHSs( eos, rr, gfs_at_rr, RHS);
   /* Then compute k1 */
   for(int GF=0; GF<NGFS; GF++) { k1[GF] = dr * RHS[GF]; }
-  
+
   /****************
    * 2nd RK4 STEP *
    ****************
@@ -92,7 +88,7 @@ inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REA
   TOV_RHSs( eos, rr+dr/2.0, gfs_at_rr_plus_dr, RHS );
   /* Then compute k2 */
   for(int GF=0; GF<NGFS; GF++) { k2[GF]  = dr * RHS[GF]; }
-  
+
   /****************
    * 3rd RK4 STEP *
    ****************
@@ -107,7 +103,7 @@ inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REA
   TOV_RHSs( eos, rr+dr/2.0, gfs_at_rr_plus_dr, RHS);
   /* Then compute k3 */
   for(int GF=0; GF<NGFS; GF++) { k3[GF]  = dr * RHS[GF]; }
-  
+
   /****************
    * 4th RK4 STEP *
    ****************
@@ -122,7 +118,7 @@ inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REA
   TOV_RHSs( eos, rr+dr, gfs_at_rr_plus_dr, RHS);
   /* Then compute k4 */
   for(int GF=0; GF<NGFS; GF++) { k4[GF]  = dr * RHS[GF]; }
-  
+
   /* Finally, Update gfs_at_rr_plus_dr with the values of
    * the gridfunctions at the radius rr + dr
    */
@@ -149,7 +145,7 @@ inline void RK4_method( eos_struct eos, const REAL rr, const REAL dr,  const REA
  *
  * Outputs(s) : dr                - Modified, if necessary, for adaptive integration
  */
-inline void recompute_step_size( const eos_struct eos, const REAL rr, const REAL *gfs_at_rr, REAL &dr ) {
+void recompute_step_size( const eos_struct eos, const REAL rr, const REAL *gfs_at_rr, REAL &dr ) {
 
   /* We will now write the algorithm to change the step size of
    * our integration, when necessary, making our method adaptive.
@@ -172,7 +168,5 @@ inline void recompute_step_size( const eos_struct eos, const REAL rr, const REAL
 
   /* Update our step size */
   dr = new_step_size;
-  
-}
 
-#endif
+}
