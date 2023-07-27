@@ -427,7 +427,7 @@ int get_EOS_parameters_from_EOSname( string EOSname, eos_struct &eos ) {
   else if( EOSname == "APR2" )
   {
     /* Copy & paste from Table III of Read et al.
-     * 34.126 2.643 3.014 2.945
+c     * 34.126 2.643 3.014 2.945
      */
     eos.Press_PPEOS[4] = 34.126; eos.Gamma_PPEOS[4] = 2.643; eos.Gamma_PPEOS[5] = 3.014; eos.Gamma_PPEOS[6] = 2.945;
   }
